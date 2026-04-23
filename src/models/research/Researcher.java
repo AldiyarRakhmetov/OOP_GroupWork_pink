@@ -1,4 +1,6 @@
-package university.research;
+package models.research;
+
+import models.exceptions.NonResearcherJoinProjectException;
 
 import java.util.Comparator;
 import java.util.List;

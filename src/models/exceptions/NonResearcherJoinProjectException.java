@@ -1,4 +1,4 @@
-package university.research;
+package models.exceptions;
 
 public class NonResearcherJoinProjectException extends Exception {
 

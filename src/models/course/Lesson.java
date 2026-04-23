@@ -1,6 +1,7 @@
-package models;
+package models.course;
 
-import enums.*;
+import models.enums.LessonType;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;

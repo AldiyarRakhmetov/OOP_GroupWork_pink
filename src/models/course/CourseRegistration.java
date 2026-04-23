@@ -1,7 +1,8 @@
-package models;
+package models.course;
 
-import enums.*;
-import exceptions.*;
+import models.enums.RegistrationStatus;
+import models.exceptions.CreditLimitExceededException;
+
 import java.io.Serializable;
 
 public class CourseRegistration implements Serializable {
@@ -18,13 +19,11 @@ public class CourseRegistration implements Serializable {
         this.status = RegistrationStatus.PENDING;
     }
 
-    public void approve() throws CreditLimitExceededException {
+    public void approve() throws CreditLimitExceededException, AlreadyRegisteredException {
         // 1. Проверка на дубликат 
-    	
-        if (student.getCourses() != null && student.getCourses().contains(this.course)) {
-            System.out.println("Registration Rejected: Student is already enrolled in " + course.getCode());
-            this.status = RegistrationStatus.REJECTED;
-            return;
+
+        if (student.getCourses().contains(this.course)) {
+            throw new AlreadyRegisteredException();
         }
 
         // 2. Проверка лимита в 21 кредит
@@ -58,7 +57,10 @@ public class CourseRegistration implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("RegID: %d | Student: %s | Course: %s | Status: %s", 
-            registrationId, student.getUsername(), course.getCode(), status);
+        return String.format("RegID: %d | Student: %s | Course: %s | Status: %s",
+                registrationId,
+                student.getUsername(),
+                course.getCode(),
+                status);
     }
 }

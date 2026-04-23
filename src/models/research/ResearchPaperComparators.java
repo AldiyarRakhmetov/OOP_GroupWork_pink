@@ -1,4 +1,4 @@
-package university.research;
+package models.research;
 
 import java.util.Comparator;
 
