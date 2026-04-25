@@ -1,5 +1,5 @@
 package models.employee;
-
+import models.users.User;
 import java.util.Date;
 
 public class Employee extends User {
@@ -16,7 +16,6 @@ public class Employee extends User {
         this.salary = salary;
         this.hireDate = hireDate;
     }
-
 
     public String getEmployeeId() { //getters and setters
         return employeeId;
