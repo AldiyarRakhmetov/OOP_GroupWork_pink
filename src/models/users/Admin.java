@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Admin extends User {
+
     private List<LogEntry> logs;
 
-    public Admin(String username, String password) {
-        super(username, password);
+    public Admin(int id, String username, String password) {
+        super(id, username, password);
         this.logs = new ArrayList<>();
     }
+
     public void addUser(User user) {
         System.out.println("Admin [" + username + "] added user: " + user.getUsername());
         log("ADD_USER: " + user.getUsername());
     }
+
     public void updateUser(User user) {
         System.out.println("Admin [" + username + "] updated user: " + user.getUsername());
         log("UPDATE_USER: " + user.getUsername());
@@ -36,12 +39,12 @@ public class Admin extends User {
             System.out.println(entry.toString());
         }
         System.out.println("Total entries: " + logs.size());
-        System.out.println();
     }
+
     private void log(String action) {
-        LogEntry entry = new LogEntry(action, this.username);
-        logs.add(entry);
+        logs.add(new LogEntry(action, this.username));
     }
+
     public List<LogEntry> getLogs() {
         return logs;
     }
@@ -49,8 +52,14 @@ public class Admin extends User {
     @Override
     public void viewProfile() {
         System.out.println("Admin Profile");
+        System.out.println("ID: " + id);
         System.out.println("Username: " + username);
-        System.out.println("Role:     Admin");
+        System.out.println("Role: Admin");
         System.out.println("Actions logged: " + logs.size());
+    }
+
+    @Override
+    public String toString() {
+        return "Admin: " + username + " (id=" + id + ")";
     }
 }
