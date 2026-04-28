@@ -2,7 +2,7 @@ package models.employee;
 import models.users.User;
 import java.util.Date;
 
-public class Employee extends User {
+public abstract class Employee extends User {
     private String employeeId;
     private double salary;
     private Date hireDate;

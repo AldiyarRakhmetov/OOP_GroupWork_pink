@@ -1,7 +1,8 @@
 package models.course;
 
-import models.enums.RegistrationStatus;
-import models.exceptions.CreditLimitExceededException;
+import models.users.*;
+import models.enums.*;
+import models.exceptions.*;
 
 import java.io.Serializable;
 
@@ -20,31 +21,27 @@ public class CourseRegistration implements Serializable {
     }
 
     public void approve() throws CreditLimitExceededException, AlreadyRegisteredException {
-        // 1. Проверка на дубликат 
 
-        if (student.getCourses().contains(this.course)) {
-            throw new AlreadyRegisteredException();
-        }
-
-        // 2. Проверка лимита в 21 кредит
-        
-        if (student.getTotalCredits() + course.getCredits() > 21) {
-            throw new CreditLimitExceededException("Credit limit (21) exceeded! Attempted: " 
-                + (student.getTotalCredits() + course.getCredits()));
-        }
-
-        // 3. Проверка лимита провалов (3 и более F)
-        
-        if (student.getFailedCoursesCount() >= 3) {
-            System.out.println("Registration Rejected: Student has 3 or more failed courses.");
-            this.status = RegistrationStatus.REJECTED;
+        //  если уже обработано — выходим
+        if (status != RegistrationStatus.PENDING) {
             return;
         }
 
-        // Если все проверки пройдены
-        
-        this.status = RegistrationStatus.APPROVED;
-        student.addCourse(this.course); 
+        try {
+            student.registerForCourse(course);
+
+            this.status = RegistrationStatus.APPROVED;
+
+        } catch (AlreadyRegisteredException | CreditLimitExceededException e) {
+
+            this.status = RegistrationStatus.REJECTED;
+            throw e;
+        }
+
+        // проверка провалов
+        if (student.getFailedCoursesCount() >= 3) {
+            this.status = RegistrationStatus.REJECTED;
+        }
     }
 
     public void reject() {

@@ -8,6 +8,10 @@ public class InvalidSupervisorException extends Exception {
                 "\" has h-index=" + hIndex + ", but minimum required is 3.");
         this.actualHIndex = hIndex;
     }
+    public InvalidSupervisorException(String message) {
+        super(message);
+        this.actualHIndex = -1;
+    }
 
     public int getActualHIndex() { return actualHIndex; }
 }

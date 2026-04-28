@@ -1,7 +1,8 @@
 package models.course;
-
+import models.users.*;
 import java.io.Serializable;
 import java.util.*;
+import models.exceptions.*;
 
 public class Course implements Serializable {
     private static final long serialVersionUID = 1L;

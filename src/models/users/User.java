@@ -26,7 +26,7 @@ public abstract class User implements Serializable {
     }
 
     //  Профиль (каждый наследник реализует сам)
-    public abstract void viewProfile();
+    public abstract void    viewProfile();
 
     //  Геттеры
     public int getId() {

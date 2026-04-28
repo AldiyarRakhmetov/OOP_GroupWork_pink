@@ -1,5 +1,9 @@
 package models.users;
 
+import java.util.*;
+import models.exceptions.*;
+import models.research.*;
+import models.transcript.*;
 import models.course.Course;
 import models.course.Mark;
 import models.exceptions.CreditLimitExceededException;
@@ -35,10 +39,9 @@ public class Student extends User {
         this.transcript = new Transcript();
     }
 
-    public void registerForCourse(Course course) throws CreditLimitExceededException {
+    public void registerForCourse(Course course) throws CreditLimitExceededException, AlreadyRegisteredException  {
         if (courseMarks.containsKey(course)) {
-            System.out.println("Already registered for: " + course.getTitle());
-            return;
+            throw new AlreadyRegisteredException();
         }
         if (totalCredits + course.getCredits() > 21) {
             throw new CreditLimitExceededException(
@@ -46,6 +49,7 @@ public class Student extends User {
             );
         }
         courseMarks.put(course, null);
+        course.addStudent(this);
         System.out.println(username + " registered for course: " + course.getTitle());
     }
 
@@ -68,6 +72,10 @@ public class Student extends User {
                 );
             }
         }
+    }
+
+    public List<Course> getCourses() {
+        return new ArrayList<>(courseMarks.keySet());
     }
 
     public Transcript getTranscript() {
