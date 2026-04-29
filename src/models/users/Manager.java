@@ -1,12 +1,14 @@
 package models.users;
-import models.employee.Employee;
 import models.course.Course;
 import models.course.CourseRegistration;
 import models.enums.ManagerType;
 import models.enums.RegistrationStatus;
 import models.system.News;
+import models.system.Report;
 
 import java.util.List;
+
+import java.io.IOException; //for report export
 
 public class Manager extends Employee {
 
@@ -14,10 +16,10 @@ public class Manager extends Employee {
 
     public Manager(int id, String username, String password,
                    String employeeId, double salary,
-                   java.util.Date hireDate,
+                   java.time.LocalDateTime hireDate, boolean isResearcher,
                    ManagerType type) {
 
-        super(id, username, password, employeeId, salary, hireDate);
+        super(id, username, password, employeeId, salary, hireDate, isResearcher);
         this.type = type;
     }
 
@@ -49,13 +51,10 @@ public class Manager extends Employee {
     }
 
     //  simple report
-    public void createReport(List<Student> students) {
-        double avg = students.stream()
-                .mapToDouble(Student::getGpa)
-                .average()
-                .orElse(0);
-
-        System.out.println("Average GPA: " + avg);
+    public void createReport(String title, List<Student> students) throws IOException {
+        Report report = new Report(title);
+        report.generate(students);
+        report.export();
     }
     // list of students
     public void viewStudents(List<Student> students) {

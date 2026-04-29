@@ -3,6 +3,12 @@ package models.system;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.List;
+import models.users.Student;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.io.IOException;
 
 public class Report implements Comparable<News>{
     private String title;
@@ -10,14 +16,12 @@ public class Report implements Comparable<News>{
     private LocalDateTime createdAt;
 
 
-    public Report(String title, String text){ //init
+    public Report(String title){ //init
         this.title = title;
-        this.content = text;
         this.createdAt = LocalDateTime.now();
     }
-    public Report(String title, String text, LocalDateTime createdAt){
+    public Report(String title, LocalDateTime createdAt){
         this.title = title;
-        this.content = text;
         this.createdAt = createdAt;
     }
 
@@ -44,11 +48,23 @@ public class Report implements Comparable<News>{
     }
 
 
-    public void generate(){
-        //TO BE ADDED, no idea what it's supposed to do either :p
+    public void generate(List<Student> students){
+        int studentCount = students.size();
+        double avg = students.stream()
+                .mapToDouble(Student::getGpa)
+                .average()
+                .orElse(0);
+        long failedStudentCount = students.stream()
+                                    .filter(student -> student.getFailedCoursesCount() == 3).count();
+
+        content = "Student amount: " + studentCount + "\nAverage gpa: " + avg + "\nFailed student amount: "
+        + failedStudentCount;
     }
-    public void export(){
-        //same situation. MAN I should've checked the diagramm earlier
+    public void export() throws IOException {
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        Path path = Path.of("report.txt");
+        String proper = title + "\nCreated at: " + createdAt.format(format) + "\n" + content;
+        Files.writeString(path, proper);
     }
 
 

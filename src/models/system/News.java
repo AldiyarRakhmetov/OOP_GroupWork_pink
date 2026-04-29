@@ -45,14 +45,17 @@ public class News implements Comparable<News>{
 
 
     public void publish(){
-        //TO BE ADDED, no idea what it's supposed to do :p
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String message = "\nNEWS!\n" + title + "\n" + text + "\n(Date: " + 
+                                                                createdAt.format(format) + ")\n";
+        System.out.println(message);
     }
 
 
     @Override //toString
     public String toString() {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return "[NEWS] " + title + ": " + text + "(Created at " + createdAt.format(format) + ")";
+        return "[NEWS] " + title + "(Created at " + createdAt.format(format) + ")";
     }
 
     @Override //equals (requires same title and date)
