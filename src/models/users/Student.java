@@ -6,12 +6,7 @@ import models.research.*;
 import models.transcript.*;
 import models.course.Course;
 import models.course.Mark;
-import models.exceptions.CreditLimitExceededException;
-import models.exceptions.CourseRetakeLimitException;
-import models.exceptions.InvalidSupervisorException;
 
-import java.util.HashMap;
-import java.util.Map;
 public class Student extends User {
     private String studentId;
     private String school;
@@ -124,7 +119,13 @@ public class Student extends User {
             );
         }
         this.supervisor = supervisor;
-        System.out.println("Supervisor " + supervisor.getUsername() + " assigned to " + username);
+        if (supervisor instanceof User) {
+            System.out.println("Supervisor " +
+                    ((User) supervisor).getUsername() +
+                    " assigned to " + username);
+        } else {
+            System.out.println("Supervisor assigned to " + username);
+        }
     }
 
     private void updateGPA() {
@@ -152,7 +153,10 @@ public class Student extends User {
         System.out.printf ("GPA: %.2f%n", gpa);
         System.out.println("Credits: " + totalCredits + " / 21");
         System.out.println("Failed: " + failedCoursesCount + " / 3");
-        System.out.println("Supervisor: " + (supervisor != null ? supervisor.getUsername() : "None"));
+        System.out.println("Supervisor: " +
+                (supervisor instanceof User
+                        ? ((User) supervisor).getUsername()
+                        : "Assigned"));
     }
 
     @Override
