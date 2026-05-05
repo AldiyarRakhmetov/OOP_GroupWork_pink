@@ -1,53 +1,53 @@
 package models.users;
 
 import models.system.LogEntry;
+import database.Database;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Admin extends User {
 
-    private List<LogEntry> logs;
-
     public Admin(int id, String username, String password) {
         super(id, username, password);
-        this.logs = new ArrayList<>();
     }
 
     public void addUser(User user) {
+        Database.getInstance().addUser(user);
+
         System.out.println("Admin [" + username + "] added user: " + user.getUsername());
-        log("ADD_USER: " + user.getUsername());
     }
 
     public void updateUser(User user) {
+        Database.getInstance().log("UPDATE_USER: " + user.getUsername(), username);
+
         System.out.println("Admin [" + username + "] updated user: " + user.getUsername());
-        log("UPDATE_USER: " + user.getUsername());
     }
 
     public void removeUser(User user) {
+        Database.getInstance().removeUser(user);
+
         System.out.println("Admin [" + username + "] removed user: " + user.getUsername());
-        log("REMOVE_USER: " + user.getUsername());
     }
 
-    public void viewLogFiles() {
+    public void viewLogs() {
+
+        var logs = Database.getInstance().getLogs();
+
         if (logs.isEmpty()) {
             System.out.println("No log entries found.");
             return;
         }
-        System.out.println("SYSTEM LOGS");
-        for (LogEntry entry : logs) {
-            System.out.println(entry.toString());
+
+        System.out.println("\n=== SYSTEM LOGS ===");
+
+        for (LogEntry log : logs) {
+            System.out.println(log);
         }
+
         System.out.println("Total entries: " + logs.size());
     }
 
-    private void log(String action) {
-        logs.add(new LogEntry(action, this.username));
-    }
-
-    public List<LogEntry> getLogs() {
-        return logs;
-    }
 
     @Override
     public void viewProfile() {
@@ -55,7 +55,8 @@ public class Admin extends User {
         System.out.println("ID: " + id);
         System.out.println("Username: " + username);
         System.out.println("Role: Admin");
-        System.out.println("Actions logged: " + logs.size());
+        int logCount = Database.getInstance().getLogs().size();
+        System.out.println("Actions logged: " + logCount);
     }
 
     @Override

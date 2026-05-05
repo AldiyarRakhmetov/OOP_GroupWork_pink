@@ -3,12 +3,13 @@ package models.users;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+import models.course.*;
 import models.enums.TeacherTitle;
 import models.exceptions.NonResearcherJoinProjectException;
 import models.research.ResearchPaper;
 import models.research.ResearchProject;
 import models.research.ResearcherImpl;
+import database.Database;
 
 public class Teacher extends User {
     private TeacherTitle title;
@@ -19,10 +20,23 @@ public class Teacher extends User {
     public Teacher(int id, String username, String password, TeacherTitle title, boolean isResearcher){
         super(id, username, password);
         this.title = title;
-        if (title == TeacherTitle.PROFESSOR && !isResearcher){
-            System.out.println("Professors are always researchers! " +
-            username + " was automatically set as researcher");
+        this.isResearcher = isResearcher;
+
+        if (title == TeacherTitle.PROFESSOR) {
+            if (!this.isResearcher) {
+                System.out.println("Professors are always researchers! " +
+                        username + " was automatically set as researcher");
+            }
             this.isResearcher = true;
+        }
+
+        if (this.isResearcher) {
+            this.researcherImpl = new ResearcherImpl() {
+                @Override
+                public String getResearcherName() {
+                    return username;
+                }
+            };
         }
     }
 
@@ -35,11 +49,38 @@ public class Teacher extends User {
 
     public void toggleResearcher(){
         isResearcher = !isResearcher;
+
+        if (isResearcher && researcherImpl == null) {
+            researcherImpl = new ResearcherImpl() {
+                @Override
+                public String getResearcherName() {
+                    return username;
+                }
+            };
+        }
     }
+
     public boolean isResearcher(){
         return isResearcher;
     }
 
+    public void putMark(Student student, Course course, Mark mark) {
+
+        try {
+            course.addMark(student, mark);
+            student.receiveMark(course, mark);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        Database.getInstance().log(
+                "Mark assigned to " + student.getUsername(),
+                username
+        );
+
+        System.out.println("Teacher " + username + " put mark for " + student.getUsername());
+    }
 
     public void printPapers(Comparator<ResearchPaper> comparator){
         if (!isResearcher) {
@@ -52,14 +93,14 @@ public class Teacher extends User {
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
         } else {
-            researcherImpl.joinProject(project);;
+            researcherImpl.joinProject(project);
         }
     }
     public void addPaper(ResearchPaper paper){
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
         } else {
-            researcherImpl.addPaper(paper);;
+            researcherImpl.addPaper(paper);
         }
     }
     public ResearchPaper getTopCitedPaper(){
@@ -86,7 +127,7 @@ public class Teacher extends User {
             return researcherImpl.getHIndex();
         }
     }
-    List<ResearchPaper> getPapers(){
+    public List<ResearchPaper> getPapers(){
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
             return Collections.emptyList();
@@ -94,9 +135,6 @@ public class Teacher extends User {
             return researcherImpl.getPapers();
         }
     }
-
-
-    //
 
     @Override
     public void viewProfile(){

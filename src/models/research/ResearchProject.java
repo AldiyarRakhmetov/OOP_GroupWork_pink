@@ -20,22 +20,25 @@ public class ResearchProject {
     }
 
 
-    public void addParticipant(Researcher researcher) throws NonResearcherJoinProjectException {
-        if (researcher == null) {
+    public void addParticipant(Object obj) throws NonResearcherJoinProjectException {
+
+        if (!(obj instanceof Researcher)) {
             throw new NonResearcherJoinProjectException(
-                    "Cannot add null participant to project \"" + topic + "\"");
+                    "Only researchers can join project \"" + topic + "\"");
         }
+
+        Researcher researcher = (Researcher) obj;
+
         if (participants.contains(researcher)) {
-            System.out.println("[INFO] Participant already in project: " + researcher);
             return;
         }
+
         participants.add(researcher);
-        researcher.joinProject(this);      // notify the researcher
-        System.out.println("[Project] Participant added to \"" + topic + "\"");
+        System.out.println("Participant added to \"" + topic + "\"");
     }
 
     public void addPaper(ResearchPaper paper) {
-        if (!publishedPapers.contains(paper)) {
+        if (paper != null && !publishedPapers.contains(paper)) {
             publishedPapers.add(paper);
         }
     }

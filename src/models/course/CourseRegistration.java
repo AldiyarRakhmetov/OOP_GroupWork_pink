@@ -3,6 +3,7 @@ package models.course;
 import models.users.*;
 import models.enums.*;
 import models.exceptions.*;
+import database.Database;
 
 import java.io.Serializable;
 
@@ -22,26 +23,31 @@ public class CourseRegistration implements Serializable {
 
     public void approve() throws CreditLimitExceededException, AlreadyRegisteredException {
 
-        //  если уже обработано — выходим
         if (status != RegistrationStatus.PENDING) {
             return;
         }
 
-        try {
-            student.registerForCourse(course);
+        // 🔥 регистрация
+        student.registerForCourse(course);
 
-            this.status = RegistrationStatus.APPROVED;
-
-        } catch (AlreadyRegisteredException | CreditLimitExceededException e) {
-
-            this.status = RegistrationStatus.REJECTED;
-            throw e;
-        }
-
-        // проверка провалов
+        // 🔥 проверка провалов
         if (student.getFailedCoursesCount() >= 3) {
             this.status = RegistrationStatus.REJECTED;
+
+            Database.getInstance().log(
+                    "Registration rejected (too many fails)",
+                    student.getUsername()
+            );
+            return;
         }
+
+        // 🔥 успех
+        this.status = RegistrationStatus.APPROVED;
+
+        Database.getInstance().log(
+                "Course registered: " + course.getTitle(),
+                student.getUsername()
+        );
     }
 
     public void reject() {

@@ -5,6 +5,7 @@ import models.enums.ManagerType;
 import models.enums.RegistrationStatus;
 import models.system.News;
 import models.system.Report;
+import database.Database;
 
 import java.util.List;
 
@@ -31,23 +32,41 @@ public class Manager extends Employee {
         }
 
         registration.approve();
+
+        Database.getInstance().log(
+                "Registration approved",
+                this.username
+        );
     }
 
     //  reject
     public void rejectRegistration(CourseRegistration registration) {
         registration.reject();
+
+        Database.getInstance().log(
+                "Registration rejected",
+                this.username
+        );
     }
 
     //  add course for registration
-    public void addCourse(List<Course> courses, Course course) {
-        if (!courses.contains(course)) {
-            courses.add(course);
-        }
+    public void addCourse(Course course) {
+        Database.getInstance().addCourse(course);
+
+        Database.getInstance().log(
+                "Course added: " + course.getCode(),
+                this.username
+        );
     }
 
     //  assign teacher
     public void assignTeacher(Course course, Teacher teacher) {
         course.addTeacher(teacher);
+
+        Database.getInstance().log(
+                "Teacher assigned to course: " + course.getCode(),
+                this.username
+        );
     }
 
     //  simple report
@@ -72,8 +91,13 @@ public class Manager extends Employee {
             throw new IllegalArgumentException("News cannot be null");
         }
 
-        news.publish(); // используем метод из News
+        news.publish();
         newsList.add(news);
+
+        Database.getInstance().log(
+                "News added: " + news.getTitle(),
+                this.username
+        );
     }
 
     @Override
