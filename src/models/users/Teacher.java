@@ -6,15 +6,18 @@ import java.util.List;
 import models.course.*;
 import models.enums.TeacherTitle;
 import models.exceptions.NonResearcherJoinProjectException;
+import models.exceptions.StudentNotFoundException;
 import models.research.ResearchPaper;
 import models.research.ResearchProject;
 import models.research.ResearcherImpl;
 import database.Database;
+import models.course.Course;
+import models.course.Mark;
 
 public class Teacher extends User {
     private TeacherTitle title;
     private boolean isResearcher;
-
+    private List<Course> courses;
     private ResearcherImpl researcherImpl;
 
     public Teacher(int id, String username, String password, TeacherTitle title, boolean isResearcher){
@@ -135,6 +138,53 @@ public class Teacher extends User {
             return researcherImpl.getPapers();
         }
     }
+
+
+    public void addCourse(Course course){
+        courses.add(course);
+        course.addTeacher(this);
+    }
+    public void updateCourses(){
+        for (Course course : courses){
+            List<Teacher> courseTeachers = course.getTeachers();
+            if (!courseTeachers.contains(this)){
+                courses.remove(course);
+            }
+        }
+    }
+    public void viewCourses(){
+        System.out.println("Courses that are taught by teacher " + username + ":\n");
+        for (Course course : courses){
+            System.out.println(course);
+        }
+    }
+    public void manageCourse(Course course, int credits){
+        courses.stream().filter(obj -> obj.equals(course)).findFirst()
+        .ifPresent(obj -> obj.setCredits(credits));
+    }
+    public void manageCourse(Course course, int credits, int yearOfStudy){
+        courses.stream().filter(obj -> obj.equals(course)).findFirst()
+        .ifPresent(obj -> {obj.setCredits(credits); obj.setYearOfStudy(yearOfStudy);});
+    }
+    public void manageCourse(Course course, String major){
+        courses.stream().filter(obj -> obj.equals(course)).findFirst()
+        .ifPresent(obj -> obj.setMajor(major));
+    }
+    public void viewStudents(Course course){
+        courses.stream().filter(obj -> obj.equals(course)).findFirst()
+        .ifPresent(obj -> obj.getStudents());
+    }
+    public void putMark(Course course, Student student, Mark mark){
+        courses.stream().filter(obj -> obj.equals(course)).findFirst()
+        .ifPresent(obj -> {
+                            try {
+                                obj.addMark(student, mark); // Potential NumberFormatException
+                            } catch (StudentNotFoundException e) {
+                                System.err.println("Can't give a mark to non-existant student!");
+                            }
+                        });
+    }
+
 
     @Override
     public void viewProfile(){

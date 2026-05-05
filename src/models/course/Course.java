@@ -58,12 +58,31 @@ public class Course implements Serializable {
     public List<Student> getStudents() {
         return students;
     }
+    public List<Teacher> getTeachers() {
+        return teachers;
+    }
 
     public String getCode() { return code; }
     public String getTitle() { return title; }
     public int getCredits() { return credits; }
     public String getMajor() { return major; }
     public int getYearOfStudy() { return yearOfStudy; }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+    public void setCredits(int credits) {
+        this.credits = credits;
+    }
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
+    }
+    public void setMajor(String major) {
+        this.major = major;
+    }
+    public void setYearOfStudy(int yearOfStudy) {
+        this.yearOfStudy = yearOfStudy;
+    }
 
     @Override
     public String toString() {
