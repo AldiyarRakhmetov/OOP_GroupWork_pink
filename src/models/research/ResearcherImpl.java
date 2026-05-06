@@ -5,8 +5,8 @@ import models.exceptions.NonResearcherJoinProjectException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-public abstract class ResearcherImpl implements Researcher {
-
+public class ResearcherImpl implements Researcher {
+    private String name;
     protected List<ResearchPaper> papers = new ArrayList<>();
     protected List<ResearchProject> projects = new ArrayList<>();
 
@@ -69,5 +69,10 @@ public abstract class ResearcherImpl implements Researcher {
         return new ArrayList<>(papers);
     }
 
-    public abstract String getResearcherName();
+    public void setName(String name){
+        this.name = name;
+    }
+    public String getResearcherName(){
+        return name;
+    }
 }

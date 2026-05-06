@@ -1,3 +1,4 @@
+package demos;
 import models.enums.TeacherTitle;
 import models.exceptions.InvalidSupervisorException;
 import models.exceptions.NonResearcherJoinProjectException;

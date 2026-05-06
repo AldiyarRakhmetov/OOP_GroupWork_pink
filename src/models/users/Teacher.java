@@ -1,9 +1,9 @@
 package models.users;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import models.course.*;
 import models.enums.TeacherTitle;
 import models.exceptions.NonResearcherJoinProjectException;
 import models.exceptions.StudentNotFoundException;
@@ -24,6 +24,7 @@ public class Teacher extends User {
         super(id, username, password);
         this.title = title;
         this.isResearcher = isResearcher;
+        this.courses = new ArrayList<>();
 
         if (title == TeacherTitle.PROFESSOR) {
             if (!this.isResearcher) {
@@ -145,12 +146,7 @@ public class Teacher extends User {
         course.addTeacher(this);
     }
     public void updateCourses(){
-        for (Course course : courses){
-            List<Teacher> courseTeachers = course.getTeachers();
-            if (!courseTeachers.contains(this)){
-                courses.remove(course);
-            }
-        }
+        courses.removeIf(course -> !course.getTeachers().contains(this));
     }
     public void viewCourses(){
         System.out.println("Courses that are taught by teacher " + username + ":\n");

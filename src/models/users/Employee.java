@@ -28,6 +28,10 @@ public class Employee extends User {
         this.salary = salary;
         this.hireDate = hireDate;
         this.isResearcher = isResearcher;
+        if (isResearcher) {
+            researcherImpl = new ResearcherImpl();
+            researcherImpl.setName(username);
+        }
     }
 
     public String getEmployeeId() { //getters and setters
@@ -53,6 +57,10 @@ public class Employee extends User {
 
     public void toggleResearcher(){
         isResearcher = !isResearcher;
+        if (isResearcher && researcherImpl == null) {
+            researcherImpl = new ResearcherImpl();
+            researcherImpl.setName(username);
+        }
     }
     public boolean isResearcher(){
         return isResearcher;
@@ -93,14 +101,14 @@ public class Employee extends User {
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
         } else {
-            researcherImpl.joinProject(project);;
+            researcherImpl.joinProject(project);
         }
     }
     public void addPaper(ResearchPaper paper){
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
         } else {
-            researcherImpl.addPaper(paper);;
+            researcherImpl.addPaper(paper);
         }
     }
     public ResearchPaper getTopCitedPaper(){
@@ -127,7 +135,7 @@ public class Employee extends User {
             return researcherImpl.getHIndex();
         }
     }
-    List<ResearchPaper> getPapers(){
+    public List<ResearchPaper> getPapers(){
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
             return Collections.emptyList();

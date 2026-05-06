@@ -6,24 +6,26 @@ import java.util.Vector;
 import models.enums.OrderStatus;
 import models.system.Order;
 
-public class TechSupporSpecialist extends Employee {
+public class TechSupportSpecialist extends Employee {
     private Vector<Order> orders;
 
-    public TechSupporSpecialist(int id, String username, String password, String employeeId, double salary,
+    public TechSupportSpecialist(int id, String username, String password, String employeeId, double salary,
         LocalDateTime hireDate){
             super(id, username, password, employeeId, salary, hireDate, false);
+            this.orders = new Vector<>();
     }
-    public TechSupporSpecialist(int id, String username, String password, String employeeId, double salary){
+    public TechSupportSpecialist(int id, String username, String password, String employeeId, double salary){
             super(id, username, password, employeeId, salary, LocalDateTime.now(), false);
+            this.orders = new Vector<>();
     }
     
     public void getOrder(Order order){
         orders.add(order);
     }
     public void viewOrders(){
-        System.out.println(username + "'s orders:\n");
+        System.out.println("\n" + username + "'s orders:");
         for (Order order : orders){
-            System.out.println(order + "\n");
+            System.out.println(order);
         }
     }
     public boolean acceptOrder(int id){

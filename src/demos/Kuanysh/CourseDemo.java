@@ -1,5 +1,7 @@
-package models.course;
+package demos.Kuanysh;
 import models.users.*;
+import models.course.Course;
+import models.course.Mark;
 import models.enums.*;
 import java.util.Date;
 
