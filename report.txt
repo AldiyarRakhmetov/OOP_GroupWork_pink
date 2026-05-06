@@ -1,0 +1,5 @@
+Student Performance Report
+Created at: 06/05/2026
+Student amount: 2
+Average gpa: 0.0
+Failed student amount: 0

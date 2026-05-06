@@ -1,4 +1,4 @@
-package demos;
+package demos.Almaz;
 import models.enums.TeacherTitle;
 import models.exceptions.InvalidSupervisorException;
 import models.exceptions.NonResearcherJoinProjectException;
@@ -8,7 +8,7 @@ import models.users.Student;
 import java.util.Date;
 import java.util.List;
 
-public class Main {
+public class ResearcherDemo {
 
     public static void main(String[] args) {
 
