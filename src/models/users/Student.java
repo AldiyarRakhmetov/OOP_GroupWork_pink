@@ -13,8 +13,6 @@ public class Student extends User {
     private String major;
     private int yearOfStudy;
     private double gpa;
-    private int totalCredits;
-    private int failedCoursesCount;
     private Researcher supervisor;
     private boolean isResearcher;
     private ResearcherImpl researcherImpl;
@@ -30,8 +28,6 @@ public class Student extends User {
         this.major = major;
         this.yearOfStudy = yearOfStudy;
         this.gpa = 0.0;
-        this.totalCredits = 0;
-        this.failedCoursesCount = 0;
         this.courseMarks = new HashMap<>();
         this.transcript = new Transcript();
         this.isResearcher = false;
@@ -52,13 +48,15 @@ public class Student extends User {
         }
     }
 
-    public void registerForCourse(Course course) throws CreditLimitExceededException, AlreadyRegisteredException  {
+    // ── Course methods ─────────────────────────────────────────────────────
+
+    public void registerForCourse(Course course) throws CreditLimitExceededException, AlreadyRegisteredException {
         if (courseMarks.containsKey(course)) {
             throw new AlreadyRegisteredException();
         }
-        if (totalCredits + course.getCredits() > 21) {
+        if (getTotalCredits() + course.getCredits() > 21) {
             throw new CreditLimitExceededException(
-                    "Cannot register: credit limit of 21 exceeded. Current: " + totalCredits
+                    "Cannot register: credit limit of 21 exceeded. Current: " + getTotalCredits()
             );
         }
         courseMarks.put(course, null);
@@ -97,19 +95,23 @@ public class Student extends User {
 
     public void rateTeacher(Teacher teacher, int rate) {
         if (rate < 1 || rate > 5) {
-            System.out.println("Rating must be between 1 and 5.");
-            return;
+            throw new IllegalArgumentException("Rating must be between 1 and 5");
         }
         System.out.printf("%s rated teacher %s: %d/5%n",
                 username, teacher.getUsername(), rate);
     }
 
     public void receiveMark(Course course, Mark mark) throws CourseRetakeLimitException {
-        if (!courseMarks.containsKey(course)) {
-            System.out.println("Student is not registered for: " + course.getTitle());
-            return;
+        if (course == null || mark == null) {
+            throw new IllegalArgumentException("Course and mark cannot be null");
         }
-        if (failedCoursesCount >= 3) {
+        if (!courseMarks.containsKey(course)) {
+            throw new IllegalStateException("Student is not registered for: " + course.getTitle());
+        }
+        if (courseMarks.get(course) != null) {
+            throw new IllegalStateException("Mark for this course is already assigned");
+        }
+        if (getFailedCoursesCount() >= 3) {
             throw new CourseRetakeLimitException(
                     username + " has already failed 3 courses. Cannot fail more."
             );
@@ -117,15 +119,12 @@ public class Student extends User {
         courseMarks.put(course, mark);
         transcript.addRecord(mark);
         updateGPA();
-
-        if (mark.calculateLetter().equals("F")) {
-            failedCoursesCount++;
-        } else {
-            totalCredits += course.getCredits();
-        }
     }
 
     public void setSupervisor(Researcher supervisor) throws InvalidSupervisorException {
+        if (supervisor == null) {
+            throw new InvalidSupervisorException("Supervisor cannot be null");
+        }
         if (yearOfStudy != 4) {
             throw new InvalidSupervisorException(
                     "Only 4th year students can have a research supervisor."
@@ -150,7 +149,7 @@ public class Student extends User {
         this.gpa = transcript.calculateGPA();
     }
 
-    // ── Researcher support ──────────────────────────────────────────────────
+    // ── Researcher support ─────────────────────────────────────────────────
 
     public boolean isResearcher() {
         return isResearcher;
@@ -168,7 +167,7 @@ public class Student extends User {
         }
     }
 
-    public void printPapers(java.util.Comparator<ResearchPaper> comparator) {
+    public void printPapers(Comparator<ResearchPaper> comparator) {
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
         } else {
@@ -195,7 +194,7 @@ public class Student extends User {
     public ResearchPaper getTopCitedPaper() {
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
-            return new ResearchPaper("", java.util.Collections.emptyList(), "", 0, null, 0, "");
+            return new ResearchPaper("", Collections.emptyList(), "", 0, null, 0, "");
         } else {
             return researcherImpl.getTopCitedPaper();
         }
@@ -222,13 +221,13 @@ public class Student extends User {
     public List<ResearchPaper> getPapers() {
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         } else {
             return researcherImpl.getPapers();
         }
     }
 
-    // ── assignMentor overloads ──────────────────────────────────────────────
+    // ── assignMentor overloads ─────────────────────────────────────────────
 
     public void assignMentor(Teacher teacher) {
         if (teacher.isResearcher()) {
@@ -261,9 +260,22 @@ public class Student extends User {
     public String getMajor()           { return major; }
     public int getYearOfStudy()        { return yearOfStudy; }
     public double getGpa()             { return gpa; }
-    public int getTotalCredits()       { return totalCredits; }
-    public int getFailedCoursesCount() { return failedCoursesCount; }
     public Researcher getSupervisor()  { return supervisor; }
+
+    public int getTotalCredits() {
+        return courseMarks.entrySet().stream()
+                .filter(e -> e.getValue() != null && !e.getValue().calculateLetter().equals("F"))
+                .mapToInt(e -> e.getKey().getCredits())
+                .sum();
+    }
+
+    public int getFailedCoursesCount() {
+        return (int) courseMarks.values().stream()
+                .filter(mark -> mark != null && mark.calculateLetter().equals("F"))
+                .count();
+    }
+
+    // ── Profile ────────────────────────────────────────────────────────────
 
     @Override
     public void viewProfile() {
@@ -275,12 +287,13 @@ public class Student extends User {
         System.out.println("Major: " + major);
         System.out.println("Year: " + yearOfStudy);
         System.out.printf ("GPA: %.2f%n", gpa);
-        System.out.println("Credits: " + totalCredits + " / 21");
-        System.out.println("Failed: " + failedCoursesCount + " / 3");
+        System.out.println("Credits: " + getTotalCredits() + " / 21");
+        System.out.println("Failed: " + getFailedCoursesCount() + " / 3");
+        System.out.println("Is Researcher: " + isResearcher);
         System.out.println("Supervisor: " +
                 (supervisor instanceof User
                         ? ((User) supervisor).getUsername()
-                        : "Assigned"));
+                        : "None"));
     }
 
     @Override
