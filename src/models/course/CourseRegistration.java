@@ -27,21 +27,22 @@ public class CourseRegistration implements Serializable {
             return;
         }
 
-        // 🔥 регистрация
-        student.registerForCourse(course);
+        if (student == null || course == null) {
+            throw new IllegalArgumentException("Student and course cannot be null");
+        }
 
-        // 🔥 проверка провалов
         if (student.getFailedCoursesCount() >= 3) {
             this.status = RegistrationStatus.REJECTED;
 
             Database.getInstance().log(
-                    "Registration rejected (too many fails)",
+                    "Registration rejected: too many failed courses",
                     student.getUsername()
             );
             return;
         }
 
-        // 🔥 успех
+        student.registerForCourse(course);
+
         this.status = RegistrationStatus.APPROVED;
 
         Database.getInstance().log(

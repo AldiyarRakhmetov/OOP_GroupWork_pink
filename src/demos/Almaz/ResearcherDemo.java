@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD:src/demos/Main.java
 public class Main {
     static class NamedResearcher extends ResearcherImpl {
         private final String name;

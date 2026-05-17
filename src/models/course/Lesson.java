@@ -14,6 +14,16 @@ public class Lesson implements Serializable {
     private LessonType type;
 
     public Lesson(String lessonId, String topic, LessonType type) {
+        if (lessonId == null || lessonId.isBlank()) {
+            throw new IllegalArgumentException("Lesson ID cannot be empty");
+        }
+        if (topic == null || topic.isBlank()) {
+            throw new IllegalArgumentException("Lesson topic cannot be empty");
+        }
+        if (type == null) {
+            throw new IllegalArgumentException("Lesson type cannot be null");
+        }
+
         this.lessonId = lessonId;
         this.topic = topic;
         this.type = type;
