@@ -16,6 +16,8 @@ public class Student extends User {
     private int totalCredits;
     private int failedCoursesCount;
     private Researcher supervisor;
+    private boolean isResearcher;
+    private ResearcherImpl researcherImpl;
 
     private Map<Course, Mark> courseMarks;
     private Transcript transcript;
@@ -32,6 +34,22 @@ public class Student extends User {
         this.failedCoursesCount = 0;
         this.courseMarks = new HashMap<>();
         this.transcript = new Transcript();
+        this.isResearcher = false;
+        this.researcherImpl = null;
+    }
+
+    public Student(int id, String username, String password,
+                   String studentId, String school, String major, int yearOfStudy, boolean isResearcher) {
+        this(id, username, password, studentId, school, major, yearOfStudy);
+        this.isResearcher = isResearcher;
+        if (isResearcher) {
+            this.researcherImpl = new ResearcherImpl() {
+                @Override
+                public String getResearcherName() {
+                    return username;
+                }
+            };
+        }
     }
 
     public void registerForCourse(Course course) throws CreditLimitExceededException, AlreadyRegisteredException  {
@@ -131,6 +149,112 @@ public class Student extends User {
     private void updateGPA() {
         this.gpa = transcript.calculateGPA();
     }
+
+    // ── Researcher support ──────────────────────────────────────────────────
+
+    public boolean isResearcher() {
+        return isResearcher;
+    }
+
+    public void toggleResearcher() {
+        isResearcher = !isResearcher;
+        if (isResearcher && researcherImpl == null) {
+            researcherImpl = new ResearcherImpl() {
+                @Override
+                public String getResearcherName() {
+                    return username;
+                }
+            };
+        }
+    }
+
+    public void printPapers(java.util.Comparator<ResearchPaper> comparator) {
+        if (!isResearcher) {
+            System.out.println(username + " is not a researcher");
+        } else {
+            researcherImpl.printPapers(comparator);
+        }
+    }
+
+    public void joinProject(ResearchProject project) throws NonResearcherJoinProjectException {
+        if (!isResearcher) {
+            System.out.println(username + " is not a researcher");
+        } else {
+            researcherImpl.joinProject(project);
+        }
+    }
+
+    public void addPaper(ResearchPaper paper) {
+        if (!isResearcher) {
+            System.out.println(username + " is not a researcher");
+        } else {
+            researcherImpl.addPaper(paper);
+        }
+    }
+
+    public ResearchPaper getTopCitedPaper() {
+        if (!isResearcher) {
+            System.out.println(username + " is not a researcher");
+            return new ResearchPaper("", java.util.Collections.emptyList(), "", 0, null, 0, "");
+        } else {
+            return researcherImpl.getTopCitedPaper();
+        }
+    }
+
+    public int calculateCitations() {
+        if (!isResearcher) {
+            System.out.println(username + " is not a researcher");
+            return 0;
+        } else {
+            return researcherImpl.calculateCitations();
+        }
+    }
+
+    public int getHIndex() {
+        if (!isResearcher) {
+            System.out.println(username + " is not a researcher");
+            return 0;
+        } else {
+            return researcherImpl.getHIndex();
+        }
+    }
+
+    public List<ResearchPaper> getPapers() {
+        if (!isResearcher) {
+            System.out.println(username + " is not a researcher");
+            return java.util.Collections.emptyList();
+        } else {
+            return researcherImpl.getPapers();
+        }
+    }
+
+    // ── assignMentor overloads ──────────────────────────────────────────────
+
+    public void assignMentor(Teacher teacher) {
+        if (teacher.isResearcher()) {
+            System.out.println("Mentor (Teacher) " + teacher.getUsername() + " assigned to " + username);
+        } else {
+            System.out.println("Cannot assign mentor: " + teacher.getUsername() + " is not a researcher");
+        }
+    }
+
+    public void assignMentor(Student student) {
+        if (student.isResearcher()) {
+            System.out.println("Mentor (Student) " + student.getUsername() + " assigned to " + username);
+        } else {
+            System.out.println("Cannot assign mentor: " + student.getUsername() + " is not a researcher");
+        }
+    }
+
+    public void assignMentor(Employee employee) {
+        if (employee.isResearcher()) {
+            System.out.println("Mentor (Employee) " + employee.getUsername() + " assigned to " + username);
+        } else {
+            System.out.println("Cannot assign mentor: " + employee.getUsername() + " is not a researcher");
+        }
+    }
+
+    // ── Getters ────────────────────────────────────────────────────────────
 
     public String getStudentId()       { return studentId; }
     public String getSchool()          { return school; }
