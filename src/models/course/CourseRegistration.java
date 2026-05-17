@@ -15,6 +15,13 @@ public class CourseRegistration implements Serializable {
     private RegistrationStatus status;
 
     public CourseRegistration(int registrationId, Student student, Course course) {
+        if (registrationId <= 0) {
+            throw new IllegalArgumentException("Registration ID must be positive");
+        }
+        if (student == null || course == null) {
+            throw new IllegalArgumentException("Student and course cannot be null");
+        }
+
         this.registrationId = registrationId;
         this.student = student;
         this.course = course;
@@ -25,10 +32,6 @@ public class CourseRegistration implements Serializable {
 
         if (status != RegistrationStatus.PENDING) {
             return;
-        }
-
-        if (student == null || course == null) {
-            throw new IllegalArgumentException("Student and course cannot be null");
         }
 
         if (student.getFailedCoursesCount() >= 3) {
@@ -53,6 +56,11 @@ public class CourseRegistration implements Serializable {
 
     public void reject() {
         this.status = RegistrationStatus.REJECTED;
+
+        Database.getInstance().log(
+                "Registration rejected: " + course.getTitle(),
+                student.getUsername()
+        );
     }
 
     public RegistrationStatus getStatus() { return status; }
