@@ -2,7 +2,7 @@ package models.course;
 
 import java.io.Serializable;
 import java.util.Objects;
-
+import models.exceptions.InvalidMarkException;
 
 public class Mark implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -24,17 +24,26 @@ public class Mark implements Serializable {
     }
 
     // Сеттеры с глубокой валидацией (защита целостности данных)
-    
+
     public void setFirstAttestation(double val) {
-        this.firstAttestation = (val >= 0 && val <= 30) ? val : 0;
+        if (val < 0 || val > 30) {
+            throw new InvalidMarkException("First attestation must be between 0 and 30");
+        }
+        this.firstAttestation = val;
     }
 
     public void setSecondAttestation(double val) {
-        this.secondAttestation = (val >= 0 && val <= 30) ? val : 0;
+        if (val < 0 || val > 30) {
+            throw new InvalidMarkException("Second attestation must be between 0 and 30");
+        }
+        this.secondAttestation = val;
     }
 
     public void setFinalExam(double val) {
-        this.finalExam = (val >= 0 && val <= 40) ? val : 0;
+        if (val < 0 || val > 40) {
+            throw new InvalidMarkException("Final exam must be between 0 and 40");
+        }
+        this.finalExam = val;
     }
 
     public double getFirstAttestation() { return firstAttestation; }
