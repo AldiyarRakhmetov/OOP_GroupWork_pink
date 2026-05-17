@@ -26,6 +26,9 @@ public class Manager extends Employee {
 
     //  approve registration
     public void approveRegistration(CourseRegistration registration) throws Exception {
+        if (registration == null) {
+            throw new IllegalArgumentException("Registration cannot be null");
+        }
 
         if (registration.getStatus() != RegistrationStatus.PENDING) {
             throw new Exception("Registration already processed");
@@ -41,6 +44,10 @@ public class Manager extends Employee {
 
     //  reject
     public void rejectRegistration(CourseRegistration registration) {
+        if (registration == null) {
+            throw new IllegalArgumentException("Registration cannot be null");
+        }
+
         registration.reject();
 
         Database.getInstance().log(
@@ -51,6 +58,10 @@ public class Manager extends Employee {
 
     //  add course for registration
     public void addCourse(Course course) {
+        if (course == null) {
+            throw new IllegalArgumentException("Course cannot be null");
+        }
+
         Database.getInstance().addCourse(course);
 
         Database.getInstance().log(
@@ -61,7 +72,11 @@ public class Manager extends Employee {
 
     //  assign teacher
     public void assignTeacher(Course course, Teacher teacher) {
-        course.addTeacher(teacher);
+        if (course == null || teacher == null) {
+            throw new IllegalArgumentException("Course and teacher cannot be null");
+        }
+
+        teacher.addCourse(course);
 
         Database.getInstance().log(
                 "Teacher assigned to course: " + course.getCode(),
@@ -77,6 +92,10 @@ public class Manager extends Employee {
     }
     // list of students
     public void viewStudents(List<Student> students) {
+        if (students == null) {
+            throw new IllegalArgumentException("Students list cannot be null");
+        }
+
         students.forEach(System.out::println);
     }
 

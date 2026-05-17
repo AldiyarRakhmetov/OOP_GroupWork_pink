@@ -11,6 +11,18 @@ public abstract class User implements Serializable {
     protected String password;
 
     public User(int id, String username, String password) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID must be positive");
+        }
+
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+
         this.id = id;
         this.username = username;
         this.password = password;
@@ -18,6 +30,10 @@ public abstract class User implements Serializable {
 
     // Авторизация
     public boolean login(String username, String password) {
+        if (username == null || password == null) {
+            return false;
+        }
+
         return this.username.equals(username) && this.password.equals(password);
     }
 
@@ -39,6 +55,10 @@ public abstract class User implements Serializable {
 
     // пароль наружу НЕ даём
     public void setPassword(String password) {
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+
         this.password = password;
     }
 

@@ -6,15 +6,16 @@ import java.util.Comparator;
 import java.util.List;
 import models.enums.TeacherTitle;
 import models.exceptions.NonResearcherJoinProjectException;
-import models.exceptions.StudentNotFoundException;
 import models.research.ResearchPaper;
 import models.research.ResearchProject;
+import models.research.Researcher;
 import models.research.ResearcherImpl;
 import database.Database;
 import models.course.Course;
 import models.course.Mark;
+import models.course.Lesson;
 
-public class Teacher extends User {
+public class Teacher extends User implements Researcher {
     private TeacherTitle title;
     private boolean isResearcher;
     private List<Course> courses;
@@ -51,7 +52,7 @@ public class Teacher extends User {
         return title;
     }
 
-    public void toggleResearcher(){
+    public void toggleResearcher() {
         isResearcher = !isResearcher;
 
         if (isResearcher && researcherImpl == null) {
@@ -62,6 +63,10 @@ public class Teacher extends User {
                 }
             };
         }
+
+        if (!isResearcher) {
+            researcherImpl = null;
+        }
     }
 
     public boolean isResearcher(){
@@ -69,21 +74,39 @@ public class Teacher extends User {
     }
 
     public void putMark(Student student, Course course, Mark mark) {
+        if (student == null || course == null || mark == null) {
+            throw new IllegalArgumentException("Student, course and mark cannot be null");
+        }
+
+        if (!courses.contains(course)) {
+            throw new IllegalStateException("Teacher does not teach this course");
+        }
+
+        if (!course.getTeachers().contains(this)) {
+            throw new IllegalStateException("Teacher is not assigned to this course");
+        }
+
+        if (!course.getStudents().contains(student)) {
+            throw new IllegalStateException("Student is not registered for this course");
+        }
+        if (course.getMark(student) != null) {
+            throw new IllegalStateException("Mark for this student is already assigned");
+        }
 
         try {
-            course.addMark(student, mark);
             student.receiveMark(course, mark);
+            course.addMark(student, mark);
+
+            Database.getInstance().log(
+                    "Mark assigned to " + student.getUsername() + " for " + course.getCode(),
+                    username
+            );
+
+            System.out.println("Teacher " + username + " put mark for " + student.getUsername());
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return;
         }
-        Database.getInstance().log(
-                "Mark assigned to " + student.getUsername(),
-                username
-        );
-
-        System.out.println("Teacher " + username + " put mark for " + student.getUsername());
     }
 
     public void printPapers(Comparator<ResearchPaper> comparator){
@@ -141,10 +164,20 @@ public class Teacher extends User {
     }
 
 
-    public void addCourse(Course course){
-        courses.add(course);
-        course.addTeacher(this);
+    public void addCourse(Course course) {
+        if (course == null) {
+            throw new IllegalArgumentException("Course cannot be null");
+        }
+
+        if (!courses.contains(course)) {
+            courses.add(course);
+        }
+
+        if (!course.getTeachers().contains(this)) {
+            course.addTeacher(this);
+        }
     }
+
     public void updateCourses(){
         courses.removeIf(course -> !course.getTeachers().contains(this));
     }
@@ -154,33 +187,30 @@ public class Teacher extends User {
             System.out.println(course);
         }
     }
-    public void manageCourse(Course course, int credits){
-        courses.stream().filter(obj -> obj.equals(course)).findFirst()
-        .ifPresent(obj -> obj.setCredits(credits));
-    }
-    public void manageCourse(Course course, int credits, int yearOfStudy){
-        courses.stream().filter(obj -> obj.equals(course)).findFirst()
-        .ifPresent(obj -> {obj.setCredits(credits); obj.setYearOfStudy(yearOfStudy);});
-    }
-    public void manageCourse(Course course, String major){
-        courses.stream().filter(obj -> obj.equals(course)).findFirst()
-        .ifPresent(obj -> obj.setMajor(major));
-    }
-    public void viewStudents(Course course){
-        courses.stream().filter(obj -> obj.equals(course)).findFirst()
-        .ifPresent(obj -> obj.getStudents());
-    }
-    public void putMark(Course course, Student student, Mark mark){
-        courses.stream().filter(obj -> obj.equals(course)).findFirst()
-        .ifPresent(obj -> {
-                            try {
-                                obj.addMark(student, mark); // Potential NumberFormatException
-                            } catch (StudentNotFoundException e) {
-                                System.err.println("Can't give a mark to non-existant student!");
-                            }
-                        });
-    }
+    public void manageCourse(Course course, Lesson lesson) {
+        if (course == null || lesson == null) {
+            throw new IllegalArgumentException("Course and lesson cannot be null");
+        }
 
+        if (!courses.contains(course)) {
+            throw new IllegalStateException("Teacher does not teach this course");
+        }
+
+        course.addLesson(lesson);
+    }
+    public void viewStudents(Course course) {
+        if (course == null) {
+            throw new IllegalArgumentException("Course cannot be null");
+        }
+
+        if (!courses.contains(course)) {
+            throw new IllegalStateException("Teacher does not teach this course");
+        }
+
+        for (Student student : course.getStudents()) {
+            System.out.println(student);
+        }
+    }
 
     @Override
     public void viewProfile(){
