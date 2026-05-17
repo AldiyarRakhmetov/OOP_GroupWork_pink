@@ -14,35 +14,32 @@ public class ResearchProject {
     private List<ResearchPaper> publishedPapers;
 
     public ResearchProject(String topic) {
+        if (topic == null || topic.isBlank())
+            throw new IllegalArgumentException("Project topic cannot be empty");
         this.topic = topic;
         this.participants = new ArrayList<>();
         this.publishedPapers = new ArrayList<>();
     }
 
-
     public void addParticipant(Object obj) throws NonResearcherJoinProjectException {
-
-        if (!(obj instanceof Researcher)) {
+        if (obj == null)
+            throw new IllegalArgumentException("Participant cannot be null");
+        if (!(obj instanceof Researcher))
             throw new NonResearcherJoinProjectException(
                     "Only researchers can join project \"" + topic + "\"");
-        }
-
         Researcher researcher = (Researcher) obj;
-
-        if (participants.contains(researcher)) {
-            return;
+        if (!participants.contains(researcher)) {
+            participants.add(researcher);
+            System.out.println("Participant added to \"" + topic + "\"");
         }
-
-        participants.add(researcher);
-        System.out.println("Participant added to \"" + topic + "\"");
     }
 
     public void addPaper(ResearchPaper paper) {
-        if (paper != null && !publishedPapers.contains(paper)) {
+        if (paper == null) throw new IllegalArgumentException("Paper cannot be null");
+        if (!publishedPapers.contains(paper)) {
             publishedPapers.add(paper);
         }
     }
-
 
     public void printProjectInfo() {
         System.out.println("========================================");
@@ -58,7 +55,6 @@ public class ResearchProject {
         System.out.println("========================================");
     }
 
-
     public void printAllPapers(Comparator<ResearchPaper> comparator) {
         System.out.println("--- All papers in project \"" + topic + "\" ---");
         participants.stream()
@@ -68,9 +64,9 @@ public class ResearchProject {
                 .forEach(System.out::println);
     }
 
-    public String getTopic()                         { return topic; }
-    public List<Researcher> getParticipants()        { return new ArrayList<>(participants); }
-    public List<ResearchPaper> getPublishedPapers()  { return new ArrayList<>(publishedPapers); }
+    public String getTopic()                        { return topic; }
+    public List<Researcher> getParticipants()       { return new ArrayList<>(participants); }
+    public List<ResearchPaper> getPublishedPapers() { return new ArrayList<>(publishedPapers); }
 
     @Override
     public boolean equals(Object o) {

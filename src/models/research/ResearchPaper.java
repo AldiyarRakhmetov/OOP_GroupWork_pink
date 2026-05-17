@@ -1,8 +1,10 @@
 package models.research;
+
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
+
 public class ResearchPaper implements Comparable<ResearchPaper> {
     private String title;
     private List<String> authors;
@@ -11,7 +13,22 @@ public class ResearchPaper implements Comparable<ResearchPaper> {
     private Date publishDate;
     private int citations;
     private String doi;
-    public ResearchPaper(String title, List<String> authors, String journal, int pages, Date publishDate, int citations, String doi) {
+
+    public ResearchPaper(String title, List<String> authors, String journal,
+                         int pages, Date publishDate, int citations, String doi) {
+        if (title == null || title.isBlank())
+            throw new IllegalArgumentException("Paper title cannot be empty");
+        if (authors == null || authors.isEmpty())
+            throw new IllegalArgumentException("Authors list cannot be empty");
+        if (journal == null || journal.isBlank())
+            throw new IllegalArgumentException("Journal cannot be empty");
+        if (pages <= 0)
+            throw new IllegalArgumentException("Pages must be positive");
+        if (citations < 0)
+            throw new IllegalArgumentException("Citations cannot be negative");
+        if (doi == null || doi.isBlank())
+            throw new IllegalArgumentException("DOI cannot be empty");
+
         this.title = title;
         this.authors = new ArrayList<>(authors);
         this.journal = journal;
@@ -26,9 +43,7 @@ public class ResearchPaper implements Comparable<ResearchPaper> {
         return Integer.compare(other.citations, this.citations);
     }
 
-    public int getLength() {
-        return pages;
-    }
+    public int getLength() { return pages; }
 
     public void printInfo() {
         System.out.println("=== Research Paper ===");
@@ -50,22 +65,22 @@ public class ResearchPaper implements Comparable<ResearchPaper> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ResearchPaper)) return false;
-        ResearchPaper that = (ResearchPaper) o;
-        return Objects.equals(doi, that.doi);
+        return Objects.equals(doi, ((ResearchPaper) o).doi);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(doi);
+    public int hashCode() { return Objects.hash(doi); }
+
+    public String getTitle()         { return title; }
+    public List<String> getAuthors() { return new ArrayList<>(authors); }
+    public String getJournal()       { return journal; }
+    public int getPages()            { return pages; }
+    public Date getPublishDate()     { return publishDate; }
+    public int getCitations()        { return citations; }
+    public String getDoi()           { return doi; }
+
+    public void setCitations(int citations) {
+        if (citations < 0) throw new IllegalArgumentException("Citations cannot be negative");
+        this.citations = citations;
     }
-
-    public String getTitle()        { return title; }
-    public List<String> getAuthors(){ return new ArrayList<>(authors); }
-    public String getJournal()      { return journal; }
-    public int getPages()           { return pages; }
-    public Date getPublishDate()    { return publishDate; }
-    public int getCitations()       { return citations; }
-    public String getDoi()          { return doi; }
-
-    public void setCitations(int citations) { this.citations = citations; }
 }
