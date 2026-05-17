@@ -10,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
 
-public class Report implements Comparable<News>{
+public class Report implements Comparable<Report>{
     private String title;
     private String content;
     private LocalDateTime createdAt;
@@ -78,7 +78,7 @@ public class Report implements Comparable<News>{
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        News notThis = (News) obj;
+        Report notThis = (Report) obj;
         return Objects.equals(title, notThis.getTitle()) &&
         Objects.equals(createdAt, notThis.getCreatedAt());
     }
@@ -89,7 +89,7 @@ public class Report implements Comparable<News>{
     }
 
     @Override //compares dates
-    public int compareTo(News notThis) {
+    public int compareTo(Report notThis) {
         return createdAt.compareTo(notThis.getCreatedAt());
     }
 }

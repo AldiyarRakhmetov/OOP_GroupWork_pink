@@ -1,4 +1,10 @@
 package demos;
+package demos.Almaz;
+import models.enums.TeacherTitle;
+import models.exceptions.InvalidSupervisorException;
+import models.exceptions.NonResearcherJoinProjectException;
+import models.research.*;
+import models.users.Student;
 
 import database.Database;
 import models.course.Course;
@@ -14,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD:src/demos/Main.java
 public class Main {
     static class NamedResearcher extends ResearcherImpl {
         private final String name;
@@ -23,6 +30,7 @@ public class Main {
         @Override public String getResearcherName() { return name; }
         @Override public String toString()           { return name; }
     }
+public class ResearcherDemo {
 
     public static void main(String[] args) {
 
