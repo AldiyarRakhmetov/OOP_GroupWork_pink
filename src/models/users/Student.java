@@ -263,9 +263,8 @@ public class Student extends User {
     public Researcher getSupervisor()  { return supervisor; }
 
     public int getTotalCredits() {
-        return courseMarks.entrySet().stream()
-                .filter(e -> e.getValue() != null && !e.getValue().calculateLetter().equals("F"))
-                .mapToInt(e -> e.getKey().getCredits())
+        return courseMarks.keySet().stream()
+                .mapToInt(Course::getCredits)
                 .sum();
     }
 
