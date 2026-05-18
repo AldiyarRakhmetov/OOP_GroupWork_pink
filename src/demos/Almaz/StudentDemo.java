@@ -215,7 +215,7 @@ public class StudentDemo {
     interface CheckedAction { void run() throws Exception; }
 
     /** Expects an exception — prints PASSED if one is thrown, FAILED otherwise */
-    private static void tryRun(String label, Runnable action) {
+    private static void tryRun(String label, CheckedAction action) {
         System.out.print("[" + label + "] → ");
         try {
             action.run();
