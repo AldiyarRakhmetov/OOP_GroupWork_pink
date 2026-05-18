@@ -6,8 +6,9 @@ import models.research.*;
 import models.transcript.*;
 import models.course.Course;
 import models.course.Mark;
+import models.research.Researcher;
 
-public class Student extends User {
+public class Student extends User implements Researcher {
     private String studentId;
     private String school;
     private String major;
