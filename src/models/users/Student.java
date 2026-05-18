@@ -189,16 +189,16 @@ public class Student extends User {
         } else {
             researcherImpl.addPaper(paper);
         }
-    }
+    }      
 
     public ResearchPaper getTopCitedPaper() {
         if (!isResearcher) {
             System.out.println(username + " is not a researcher");
-            return new ResearchPaper("", Collections.emptyList(), "", 0, null, 0, "");
+            return null;
         } else {
             return researcherImpl.getTopCitedPaper();
         }
-    }
+    }      
 
     public int calculateCitations() {
         if (!isResearcher) {
