@@ -1,0 +1,171 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP Group Work - Team Pink</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>OOP GROUP WORK</h1>
+            <h2>TEAM “PINK”</h2>
+        </header>
+
+        <section>
+            <h3>Student Class (and General Information for Classes in “users” Folder)</h3>
+
+            <p>
+                Student class is a child of a User class, which means it has an id,
+                username and password; this applies to every other User child.
+                Students have the ability to register for courses, view marks in their
+                marks hashmap, update GPA and set themselves a supervisor if they
+                happen to be researchers.
+            </p>
+
+            <p>
+                Students can also view their profiles via the
+                <span class="highlight">viewProfile()</span> method, which is also a
+                User method overridden by all of its children. Student class also
+                contains getters and setters.
+            </p>
+
+            <p>
+                Students themselves are also able to be researchers. This is implemented
+                using two variables:
+                <span class="highlight">isResearcher</span> and
+                <span class="highlight">researcherImpl</span>.
+            </p>
+
+            <p>
+                The Boolean parameter <span class="highlight">isResearcher</span>
+                allows researcher-related methods to determine whether they can be used.
+                If the student is not a researcher, related methods will display a
+                message explaining it.
+            </p>
+
+            <p>
+                The <span class="highlight">researcherImpl</span> object handles all
+                researcher-based methods and performs the required logic internally.
+                This implementation also applies to other classes capable of becoming
+                researchers.
+            </p>
+        </section>
+
+        <section>
+            <h3>Teacher, Employee, TechSupportSpecialist, Admin Classes</h3>
+
+            <p>
+                Teacher, Employee and TechSupportSpecialist classes (which itself is a
+                child of Employee) are similar to Student class, but each has different
+                available methods.
+            </p>
+
+            <p>
+                Teachers are able to give students marks and have a unique
+                <span class="highlight">TeacherTitle</span> enum value.
+                Employees can message each other and give complaints to other employees.
+                TechSupportSpecialists can receive, accept and progress orders assigned
+                to them.
+            </p>
+
+            <h4>Additional Notes</h4>
+
+            <ul>
+                <li>
+                    TechSupportSpecialist cannot be a researcher, therefore its
+                    <span class="highlight">isResearcher</span> value is always false.
+                </li>
+
+                <li>
+                    Teacher throws a
+                    <span class="highlight">CourseRetakeLimitException</span>
+                    if a student cannot be given a mark for any reason.
+                </li>
+
+                <li>
+                    Employee cannot clear the complaints vector.
+                </li>
+            </ul>
+
+            <p>
+                Admin is the most unique class among those mentioned. Although it is
+                also a child of User, it does not contain
+                <span class="highlight">isResearcher</span>. Admin’s main purpose is
+                to add, remove and check Users under its jurisdiction.
+            </p>
+        </section>
+
+        <section>
+            <h3>Supporting Classes</h3>
+
+            <p>
+                While classes inside the “users” folder are the primary ones, there are
+                additional classes that support their functionality.
+            </p>
+
+            <p>
+                Enumerators and exceptions are straightforward, but other supporting
+                classes are also important.
+            </p>
+
+            <p>
+                <span class="highlight">Researcher</span> is the only interface in the
+                project and defines how a researcher should function, while
+                <span class="highlight">ResearcherImpl</span> implements its logic.
+            </p>
+
+            <p>
+                <span class="highlight">Mark</span>,
+                <span class="highlight">Lesson</span> and
+                <span class="highlight">CourseRegistration</span> are supplementary
+                classes for the <span class="highlight">Course</span> class, which is
+                required by Student and Teacher to function properly.
+            </p>
+
+            <p>
+                Course can also store Students and Teachers belonging to it inside
+                “teachers” and “students” lists.
+            </p>
+
+            <p>
+                <span class="highlight">Transcript</span>, while located in a different
+                folder, is also an important part of User-related classes.
+            </p>
+
+            <p>
+                The folder titled <span class="highlight">system</span> contains
+                supplementary classes that do not belong to the “course” category:
+            </p>
+
+            <ul>
+                <li>
+                    <span class="highlight">LogEntry</span> — used by Admin to keep
+                    track of system logs.
+                </li>
+
+                <li>
+                    <span class="highlight">News</span> and
+                    <span class="highlight">Report</span> — both can print themselves
+                    using unique commands and are used by Manager for handling reports
+                    and news.
+                </li>
+
+                <li>
+                    <span class="highlight">Order</span> — used by
+                    TechSupportSpecialist to process orders with statuses defined by
+                    the <span class="highlight">OrderStatus</span> enum.
+                </li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Created by Team “Pink”: Aldiyar Rakhmetov, Marat Irgaliyev, Kuanyshbek Bauyrzhanuly, Almaz Assalbekuly</p>
+        </footer>
+    </div>
+
+</body>
+</html>
