@@ -13,7 +13,7 @@ import java.util.List;
 
 public class StudentDemo {
 
-    public static void main(String[] args) {
+    static void main(String[] args) throws Exception {
         Database db = Database.getInstance();
 
         sep("1. Student Creation & Profile");
